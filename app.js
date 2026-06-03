@@ -138,6 +138,8 @@ function buildTimetable() {
     const corner = document.createElement('div');
     corner.className = 'timetable-header corner';
     corner.textContent = 'Day';
+    corner.style.gridRow = '1';
+    corner.style.gridColumn = '1';
     t.appendChild(corner);
 
     // Time headers (horizontal, 1 hour ranges)
@@ -145,7 +147,8 @@ function buildTimetable() {
         const hour = START_HOUR + (slot / 2);
         const lbl = document.createElement('div');
         lbl.className = 'time-label hour-start';
-        lbl.style.gridColumn = 'span 2';
+        lbl.style.gridRow = '1';
+        lbl.style.gridColumn = `${slot + 2} / span 2`;
         lbl.textContent = `${String(hour).padStart(2, '0')}.00`;
         t.appendChild(lbl);
     }
@@ -157,6 +160,8 @@ function buildTimetable() {
         h.className = 'timetable-header day-header';
         h.textContent = day;
         h.dataset.day = i;
+        h.style.gridRow = `${i + 2}`;
+        h.style.gridColumn = '1';
         t.appendChild(h);
 
         // Cells for this day
@@ -166,6 +171,8 @@ function buildTimetable() {
             cell.className = `timetable-cell ${isHourEnd ? 'hour-end' : ''}`;
             cell.dataset.day = i;
             cell.dataset.slot = slot;
+            cell.style.gridRow = `${i + 2}`;
+            cell.style.gridColumn = `${slot + 2}`;
             t.appendChild(cell);
         }
     });
