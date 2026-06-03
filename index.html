@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Class Schedule - Plan your timetable, track exams, and customize your schedule">
+    <title>Class Schedule Planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container" id="app-container">
+        <!-- Header -->
+        <header class="header" id="header">
+            <div class="header-left">
+                <div class="logo-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                        <path d="M3 8H21" stroke="currentColor" stroke-width="2"/>
+                        <path d="M8 4V8M16 4V8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <rect x="6" y="11" width="3" height="2" rx="0.5" fill="currentColor"/>
+                        <rect x="6" y="15" width="3" height="2" rx="0.5" fill="currentColor"/>
+                        <rect x="10.5" y="11" width="3" height="2" rx="0.5" fill="currentColor"/>
+                        <rect x="10.5" y="15" width="3" height="2" rx="0.5" fill="currentColor"/>
+                        <rect x="15" y="11" width="3" height="2" rx="0.5" fill="currentColor"/>
+                    </svg>
+                </div>
+                <h1>Class Schedule</h1>
+            </div>
+            <div class="header-actions">
+                <!-- Background Color -->
+                <div class="color-picker-wrapper" id="color-picker-wrapper">
+                    <label>BG</label>
+                    <div class="color-presets" id="color-presets">
+                        <div class="color-preset active" data-color="#ffffff" style="background:#ffffff;border-color:#ddd" title="White"></div>
+                        <div class="color-preset" data-color="#f0f4ff" style="background:#f0f4ff" title="Light Blue"></div>
+                        <div class="color-preset" data-color="#fdf2f8" style="background:#fdf2f8" title="Light Pink"></div>
+                        <div class="color-preset" data-color="#f0fdf4" style="background:#f0fdf4" title="Light Green"></div>
+                        <div class="color-preset" data-color="#fffbeb" style="background:#fffbeb" title="Light Yellow"></div>
+                        <div class="color-preset" data-color="#faf5ff" style="background:#faf5ff" title="Light Purple"></div>
+                        <div class="color-preset" data-color="#1a1d2e" style="background:#1a1d2e" title="Dark"></div>
+                    </div>
+                    <div class="color-picker-preview" id="color-picker-preview" style="background:#ffffff">
+                        <input type="color" id="bg-color-picker" value="#ffffff" title="Pick background color">
+                    </div>
+                </div>
+
+                <!-- Decorate Toggle -->
+                <button class="btn btn-decorate" id="btn-decorate" onclick="toggleDecoratePanel()" title="Decorate your schedule">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                    </svg>
+                    Decorate
+                </button>
+
+                <!-- Import Image -->
+                <button class="btn btn-secondary" onclick="document.getElementById('import-image-input').click()" title="Import schedule image">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    Import Image
+                </button>
+                <input type="file" id="import-image-input" accept="image/*" style="display:none" onchange="handleImageImport(event)">
+
+                <!-- Add Subject -->
+                <button class="btn btn-primary" id="btn-add-subject" onclick="openModal()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add Subject
+                </button>
+
+                <!-- Download -->
+                <button class="btn btn-secondary" id="btn-download" onclick="downloadImage()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download
+                </button>
+            </div>
+        </header>
+
+        <!-- Decorate Panel (hidden by default) -->
+        <div class="decorate-panel" id="decorate-panel">
+            <div class="decorate-tabs">
+                <button class="decorate-tab active" data-tab="stickers" onclick="switchDecorateTab('stickers')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                    Stickers
+                </button>
+                <button class="decorate-tab" data-tab="text" onclick="switchDecorateTab('text')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                    Text
+                </button>
+                <button class="decorate-tab" data-tab="image" onclick="switchDecorateTab('image')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    Background
+                </button>
+                <button class="decorate-tab" data-tab="frame" onclick="switchDecorateTab('frame')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                    Frame
+                </button>
+            </div>
+
+            <!-- Stickers Tab -->
+            <div class="decorate-content" id="tab-stickers">
+                <div class="sticker-grid" id="sticker-grid"></div>
+                <p class="decorate-hint">Click a sticker to add it. Drag to move, double-click to remove.</p>
+            </div>
+
+            <!-- Text Tab -->
+            <div class="decorate-content hidden" id="tab-text">
+                <div class="text-controls">
+                    <input type="text" id="deco-text-input" placeholder="Type your text..." class="deco-input">
+                    <select id="deco-text-size" class="deco-select">
+                        <option value="12">Small</option>
+                        <option value="16" selected>Medium</option>
+                        <option value="22">Large</option>
+                        <option value="32">XL</option>
+                    </select>
+                    <input type="color" id="deco-text-color" value="#6c63ff" class="deco-color-input" title="Text color">
+                    <label class="deco-checkbox"><input type="checkbox" id="deco-text-bold"> <strong>B</strong></label>
+                    <button class="btn btn-sm btn-primary" onclick="addTextDecoration()">Add</button>
+                </div>
+                <p class="decorate-hint">Add text labels. Drag to reposition, double-click to remove.</p>
+            </div>
+
+            <!-- Background Image Tab -->
+            <div class="decorate-content hidden" id="tab-image">
+                <div class="bg-image-controls">
+                    <button class="btn btn-sm btn-secondary" onclick="document.getElementById('bg-image-input').click()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Upload Background
+                    </button>
+                    <input type="file" id="bg-image-input" accept="image/*" style="display:none" onchange="handleBgImage(event)">
+                    <div class="opacity-control">
+                        <label>Opacity</label>
+                        <input type="range" id="bg-opacity" min="5" max="100" value="20" oninput="updateBgOpacity(this.value)">
+                        <span id="bg-opacity-val">20%</span>
+                    </div>
+                    <button class="btn btn-sm btn-ghost" onclick="removeBgImage()" id="btn-remove-bg" style="display:none">Remove</button>
+                </div>
+                <p class="decorate-hint">Set a background image behind the timetable grid.</p>
+            </div>
+
+            <!-- Frame Tab -->
+            <div class="decorate-content hidden" id="tab-frame">
+                <div class="frame-options" id="frame-options">
+                    <div class="frame-option active" data-frame="none" onclick="applyFrame('none')">
+                        <div class="frame-preview frame-none">None</div>
+                    </div>
+                    <div class="frame-option" data-frame="rounded" onclick="applyFrame('rounded')">
+                        <div class="frame-preview frame-rounded">Rounded</div>
+                    </div>
+                    <div class="frame-option" data-frame="shadow" onclick="applyFrame('shadow')">
+                        <div class="frame-preview frame-shadow">Shadow</div>
+                    </div>
+                    <div class="frame-option" data-frame="gradient-border" onclick="applyFrame('gradient-border')">
+                        <div class="frame-preview frame-gradient">Gradient</div>
+                    </div>
+                    <div class="frame-option" data-frame="double" onclick="applyFrame('double')">
+                        <div class="frame-preview frame-double">Double</div>
+                    </div>
+                    <div class="frame-option" data-frame="dashed" onclick="applyFrame('dashed')">
+                        <div class="frame-preview frame-dashed">Dashed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Capture Area -->
+        <div id="capture-area">
+
+
+            <!-- Timetable -->
+            <div class="timetable-wrapper" id="timetable-wrapper">
+                <!-- Background Image Layer -->
+                <div class="timetable-bg-image" id="timetable-bg-image"></div>
+                <div class="timetable" id="timetable">
+                    <!-- Generated by JS -->
+                </div>
+                <!-- Decorations Layer -->
+                <div class="decorations-layer" id="decorations-layer"></div>
+            </div>
+
+            <!-- Exam Section -->
+            <div class="exam-section" id="exam-section">
+                <div class="exam-panel midterm-panel">
+                    <div class="exam-panel-header">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        <h2>Midterm Exams</h2>
+                    </div>
+                    <div class="exam-list" id="midterm-list">
+                        <div class="exam-empty">No exams scheduled</div>
+                    </div>
+                </div>
+                <div class="exam-panel final-panel">
+                    <div class="exam-panel-header">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        <h2>Final Exams</h2>
+                    </div>
+                    <div class="exam-list" id="final-list">
+                        <div class="exam-empty">No exams scheduled</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Subject Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modal-title">Add Subject</h2>
+                <button class="modal-close" onclick="closeModal()" aria-label="Close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="subject-form" onsubmit="handleSubmit(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="subject-code">Course Code</label>
+                        <input type="text" id="subject-code" placeholder="e.g. CS101" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject-name">Course Name</label>
+                        <input type="text" id="subject-name" placeholder="e.g. Mathematics" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject-day">Day</label>
+                        <select id="subject-day" required>
+                            <option value="">Select day</option>
+                            <option value="0">Monday</option>
+                            <option value="1">Tuesday</option>
+                            <option value="2">Wednesday</option>
+                            <option value="3">Thursday</option>
+                            <option value="4">Friday</option>
+                            <option value="5">Saturday</option>
+                            <option value="6">Sunday</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject-room">Room</label>
+                        <input type="text" id="subject-room" placeholder="e.g. A301">
+                    </div>
+                    <div class="form-group">
+                        <label for="start-time">Start Time</label>
+                        <select id="start-time" required>
+                            <option value="">Select time</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="end-time">End Time</label>
+                        <select id="end-time" required>
+                            <option value="">Select time</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-divider"><span>Exam Information</span></div>
+
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="exam-label">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            Midterm Exam
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="midterm-day">Day</label>
+                        <select id="midterm-day">
+                            <option value="">Select day</option>
+                            <option value="Mon">Monday</option>
+                            <option value="Tue">Tuesday</option>
+                            <option value="Wed">Wednesday</option>
+                            <option value="Thu">Thursday</option>
+                            <option value="Fri">Friday</option>
+                            <option value="Sat">Saturday</option>
+                            <option value="Sun">Sunday</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="midterm-date">Date</label>
+                        <input type="date" id="midterm-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="midterm-time">Start Time</label>
+                        <select id="midterm-time"><option value="">Select time</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="midterm-end-time">End Time</label>
+                        <select id="midterm-end-time"><option value="">Select time</option></select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="exam-label">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            Final Exam
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="final-day">Day</label>
+                        <select id="final-day">
+                            <option value="">Select day</option>
+                            <option value="Mon">Monday</option>
+                            <option value="Tue">Tuesday</option>
+                            <option value="Wed">Wednesday</option>
+                            <option value="Thu">Thursday</option>
+                            <option value="Fri">Friday</option>
+                            <option value="Sat">Saturday</option>
+                            <option value="Sun">Sunday</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="final-date">Date</label>
+                        <input type="date" id="final-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="final-time">Start Time</label>
+                        <select id="final-time"><option value="">Select time</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="final-end-time">End Time</label>
+                        <select id="final-end-time"><option value="">Select time</option></select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" id="btn-delete" style="display:none; color:#ef4444; border-color:rgba(239,68,68,0.2)" onclick="deleteCurrentSubject()">Delete</button>
+                    <div style="flex:1"></div>
+                    <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="context-menu">
+        <button class="context-menu-item delete" onclick="deleteSubject()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+            </svg>
+            Delete Subject
+        </button>
+    </div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
